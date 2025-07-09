@@ -1,0 +1,28 @@
+.table-container {
+  margin-top: 30px;
+  overflow-x: auto;
+}
+
+.analytics-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+}
+
+.analytics-table th,
+.analytics-table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+
+.analytics-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.percentage-row td {
+  background-color: #f0f8ff;
+  font-weight: bold;
+  border-top: 2px solid #ccc;
+}
