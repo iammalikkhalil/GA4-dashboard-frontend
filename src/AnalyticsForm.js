@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './AnalyticsForm.css';
 import AnalyticsTable from './AnalyticsTable';
+import AnalyticsChart from './AnalyticsChart';
 import config from './config';
 
 function AnalyticsForm() {
@@ -16,6 +17,8 @@ function AnalyticsForm() {
     const [versionsLoading, setVersionsLoading] = useState(true);
     const [responseData, setResponseData] = useState(null);
     const [dataLoading, setDataLoading] = useState(false);
+    const [chartData, setChartData] = useState(null);
+
 
     // Fetch App Versions
     useEffect(() => {
@@ -51,6 +54,10 @@ function AnalyticsForm() {
             const data = await res.json();
             setResponseData(data);
             console.log("API response:", data);
+
+            const refined = refineAnalyticsData(data);
+            setChartData(refined);
+
         } catch (err) {
             console.error("Request failed:", err);
             setResponseData({ error: 'Request failed' });
@@ -76,6 +83,30 @@ function AnalyticsForm() {
         };
         fetchInitialData();
     }, [fetchAnalyticsData]);
+
+
+
+    const refineAnalyticsData = (data) => {
+        if (!data?.rows || data.rows.length < 2) return null;
+
+        const rows = data.rows.map((row) => ({
+            eventName: row.dimensionValues[0].value,
+            eventCount: parseInt(row.metricValues[0].value, 10),
+            totalUsers: parseInt(row.metricValues[1].value, 10),
+        }));
+
+        const event1 = rows.find(r => r.eventName === 'App_Lang_Screen');
+        const event2 = rows.find(r => r.eventName === 'ASE_N_Imp_AppLanguage_scr');
+
+        if (!event1 || !event2) return null;
+
+        return {
+            eventCountPercent: ((event2.eventCount / event1.eventCount) * 100).toFixed(2),
+            totalUsersPercent: ((event2.totalUsers / event1.totalUsers) * 100).toFixed(2),
+        };
+    };
+
+
 
     return (
         <div className="form-container">
@@ -152,6 +183,13 @@ function AnalyticsForm() {
                     <AnalyticsTable data={responseData} />
                 </div>
             )}
+            {!dataLoading && responseData && (
+                <div className="response-box">
+                    <h3>Chart View</h3>
+                    <AnalyticsChart data={chartData} />
+                </div>
+            )}
+
         </div>
     );
 }

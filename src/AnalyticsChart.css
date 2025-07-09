@@ -1,0 +1,6 @@
+/* Responsive container for Chart.js */
+.chart-wrapper {
+  width: 100%;
+  aspect-ratio: 1.2 / 1;
+  position: relative;
+}
