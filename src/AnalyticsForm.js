@@ -185,7 +185,6 @@ function AnalyticsForm() {
             )}
             {!dataLoading && responseData && (
                 <div className="response-box">
-                    <h3>Chart View</h3>
                     <AnalyticsChart data={chartData} />
                 </div>
             )}
